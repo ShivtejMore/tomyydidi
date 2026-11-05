@@ -1,0 +1,400 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Sorry, Didi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Kalam:wght@300;400;700&family=Hind:wght@400;500;600&display=swap">
+<style>
+/* Layout: five scenes shown one at a time. Each scene is a small object the viewer taps open (envelope, doors, gift, padlock, tulip). Scenes swap with a soft fade and never slide. */
+:root {
+  --bg: #FFEFF3;
+  --paper: #FFFAFB;
+  --ink: #4A1F33;
+  --muted: #8A5A6E;
+  --accent: #E0456F;
+  --accent-deep: #B92F57;
+  --accent-ink: #FFFFFF;
+  --soft: #FFD3DF;
+  --leaf: #4FA582;
+  --bear: #C98B5C;
+  --bear-light: #F1CFAE;
+  --tear: #5DB1EA;
+  --env-back: #F7B9CB;
+  --env-front: #FFD3DF;
+  --env-flap: #FFC2D3;
+  --font-display: "Baloo 2", system-ui, sans-serif;
+  --font-hand: "Kalam", cursive, sans-serif;
+  --font-ui: "Hind", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #2A1420; --paper: #36192A; --ink: #FFE6EE; --muted: #D9A5B8;
+    --accent: #FF7A9F; --accent-deep: #E0557D; --accent-ink: #3A0F20; --soft: #5A2640; --leaf: #7BD3AC;
+    --bear: #D9A072; --bear-light: #F3D4B4; --tear: #7CC4F2;
+    --env-back: #7A3552; --env-front: #8A3F5C; --env-flap: #95466A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #2A1420; --paper: #36192A; --ink: #FFE6EE; --muted: #D9A5B8;
+  --accent: #FF7A9F; --accent-deep: #E0557D; --accent-ink: #3A0F20; --soft: #5A2640; --leaf: #7BD3AC;
+  --bear: #D9A072; --bear-light: #F3D4B4; --tear: #7CC4F2;
+  --env-back: #7A3552; --env-front: #8A3F5C; --env-flap: #95466A;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-ui); font-size: 18px; line-height: 1.7;
+  padding-block: 20px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow-x: hidden;
+}
+main { max-width: 34rem; margin: 0 auto; position: relative; }
+
+/* Progress */
+.dots { display: flex; gap: 8px; align-items: center; margin-bottom: 18px; }
+.dot { height: 10px; width: 10px; border-radius: 999px; background: var(--soft); transition: width .3s ease, background .3s ease; }
+.dot.done { background: var(--accent); opacity: .55; }
+.dot.now { background: var(--accent); width: 30px; }
+
+/* Scenes */
+.scene { display: flex; flex-direction: column; gap: 6px; min-height: calc(100svh - 130px); }
+.scene.enter { animation: fade-in .55s ease both; }
+@keyframes fade-in { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: none; } }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.6rem, 11vw, 4rem); line-height: 1.12; margin: 0; text-wrap: balance; }
+h1 span { color: var(--accent); }
+h2 { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.9rem, 8vw, 2.5rem); line-height: 1.2; margin: 0; text-wrap: balance; }
+.lead { font-family: var(--font-hand); font-size: 1.3rem; color: var(--muted); margin: 4px 0 0; line-height: 1.6; }
+.stage { display: grid; place-items: center; margin: 14px 0 0; }
+.hint { font-family: var(--font-display); font-weight: 500; color: var(--accent); margin: 10px 0 0; font-size: 1.15rem; text-align: center; }
+.reveal { margin-top: 18px; animation: fade-in .6s ease both; }
+.nextbar { margin-top: auto; padding-top: 28px; }
+.pill {
+  font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; line-height: 1.3;
+  border-radius: 999px; padding: 12px 26px; cursor: pointer; min-height: 48px; min-width: 0;
+  border: 2px solid var(--accent); transition: transform .15s ease;
+}
+.pill:hover { transform: translateY(-2px); }
+.pill:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.pill.solid { background: var(--accent); color: var(--accent-ink); }
+.pill.ghost { background: transparent; color: var(--accent); }
+.objbtn { display: block; background: none; border: 0; padding: 0; margin: 0; font: inherit; color: inherit; cursor: pointer; }
+.objbtn:focus-visible { outline: 3px solid var(--ink); outline-offset: 6px; border-radius: 12px; }
+.bob { animation: bob 2.2s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-6px); } }
+.opened .bob, .opened.bob { animation: none; }
+
+/* Scene 1: bear + envelope */
+.bear { width: min(14rem, 62%); height: auto; display: block; margin-left: -4px; }
+.bear .head { transform-origin: 120px 160px; animation: sway 3.6s ease-in-out infinite; }
+.bear .drop { animation: tear 2.4s ease-in infinite; transform-origin: 98px 104px; }
+.bear .t-text { font-family: var(--font-display); font-weight: 700; font-size: 25px; fill: var(--accent); }
+@keyframes sway { 50% { transform: rotate(-2.5deg); } }
+@keyframes tear { 0% { transform: translateY(0) scale(.6); opacity: 0; } 20% { opacity: 1; transform: translateY(2px) scale(1); } 100% { transform: translateY(46px) scale(1); opacity: 0; } }
+.env-wrap { --w: min(20rem, calc(100vw - 32px)); perspective: 900px; padding-top: 0; transition: padding-top .6s ease; }
+.env-wrap.opened { padding-top: calc(var(--w) * 0.37); }
+.envelope { position: relative; width: var(--w); aspect-ratio: 3 / 2; }
+.env-back, .env-front, .env-flap { position: absolute; left: 0; width: 100%; display: block; }
+.env-back { top: 0; height: 100%; background: var(--env-back); border-radius: 10px; box-shadow: 0 12px 28px color-mix(in srgb, var(--accent) 22%, transparent); }
+.env-front { top: 0; height: 100%; background: var(--env-front); border-radius: 10px; clip-path: polygon(0 0, 50% 55%, 100% 0, 100% 100%, 0 100%); z-index: 2; }
+.env-flap { top: 0; height: 55%; background: var(--env-flap); clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: top center; transition: transform .7s ease; z-index: 3; }
+.env-wrap.opened .env-flap { transform: rotateX(180deg); }
+.env-heart { position: absolute; left: 50%; top: 37%; width: 2.6rem; height: 2.6rem; margin: -1.3rem 0 0 -1.3rem; color: var(--accent); z-index: 4; transition: opacity .3s ease; }
+.env-wrap.opened .env-heart { opacity: 0; }
+.env-label { position: absolute; left: 0; right: 0; bottom: 12%; text-align: center; font-family: var(--font-hand); font-size: 1.5rem; font-weight: 700; z-index: 3; }
+
+/* Scene 2: doors over the letter */
+.doors { position: relative; perspective: 1100px; margin-top: 16px; }
+.letter {
+  background: var(--paper); border-radius: 6px 22px 6px 22px; padding: 28px 24px;
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--accent) 16%, transparent);
+  font-family: var(--font-hand); font-size: 1.28rem; line-height: 1.85;
+}
+.letter p { margin: 0 0 1em; }
+.sign { margin-top: 20px; text-align: right; font-family: var(--font-hand); font-size: 1.2rem; color: var(--muted); }
+.sign strong { display: block; font-size: 1.5rem; color: var(--accent); font-weight: 700; }
+.door { position: absolute; top: 0; bottom: 0; width: 50%; background: var(--env-flap); border: 3px solid var(--accent); z-index: 2; transition: transform .9s cubic-bezier(.5,0,.2,1), opacity .4s ease .6s; display: grid; place-items: center; }
+.door.l { left: 0; border-radius: 22px 0 0 22px; transform-origin: left center; }
+.door.r { right: 0; border-radius: 0 22px 22px 0; transform-origin: right center; }
+.door::after { content: ""; position: absolute; top: 50%; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); }
+.door.l::after { right: 12px; } .door.r::after { left: 12px; }
+.door .panel { width: 58%; height: 62%; border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent); border-radius: 12px; }
+.doors.opened .door.l { transform: rotateY(-105deg); opacity: 0; }
+.doors.opened .door.r { transform: rotateY(105deg); opacity: 0; }
+.doors .doorbtn { position: absolute; inset: 0; z-index: 3; width: 100%; border-radius: 22px; }
+.doors.opened .doorbtn { display: none; }
+
+/* Scene 3: gift + coupons */
+.gift { width: min(14rem, 66%); height: auto; display: block; overflow: visible; }
+.gift .lid { transform-box: fill-box; transform-origin: 0% 100%; transition: transform .7s cubic-bezier(.3,1.4,.5,1); }
+.opened .gift .lid, .gift.opened .lid { transform: translate(14px, -46px) rotate(-22deg); }
+.coupons { display: grid; gap: 12px; }
+.coupon { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; background: var(--paper); border: 2px dashed var(--accent); border-radius: 14px; padding: 14px 14px 14px 18px; overflow: hidden; }
+.coupon .tag { font-family: var(--font-display); font-weight: 700; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.coupon .what { font-family: var(--font-hand); font-size: 1.25rem; line-height: 1.4; margin: 2px 0 0; min-width: 0; }
+.redeem { padding: 8px 18px; min-height: 42px; font-size: 1rem; background: var(--accent); color: var(--accent-ink); }
+.stamp { position: absolute; right: 14px; top: 50%; transform: translateY(-50%) rotate(-12deg) scale(1.6); font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; letter-spacing: .08em; color: var(--accent); border: 3px solid var(--accent); border-radius: 8px; padding: 2px 10px; opacity: 0; pointer-events: none; background: color-mix(in srgb, var(--paper) 88%, transparent); }
+.coupon.done .stamp { opacity: 1; transform: translateY(-50%) rotate(-12deg) scale(1); transition: transform .25s cubic-bezier(.3,1.6,.6,1), opacity .15s; }
+.coupon.done .redeem { visibility: hidden; }
+
+/* Scene 4: padlock + promises */
+.lock { width: min(10rem, 48%); height: auto; display: block; overflow: visible; }
+.lock .shackle { transform-box: fill-box; transform-origin: 100% 100%; transition: transform .6s cubic-bezier(.3,1.4,.5,1); }
+.opened .lock .shackle, .lock.opened .shackle { transform: translateY(-16px) rotate(-32deg); }
+.lock.shake { animation: shake .45s ease; }
+@keyframes shake { 20% { transform: rotate(-6deg); } 40% { transform: rotate(5deg); } 60% { transform: rotate(-4deg); } 80% { transform: rotate(2deg); } }
+.promises { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; font-size: 1.1rem; }
+.promises li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; }
+.promises svg { width: 28px; height: 28px; color: var(--leaf); margin-top: 2px; }
+
+/* Scene 5: tulip + question */
+.tulip { width: min(11rem, 52%); height: auto; display: block; overflow: visible; }
+.tulip .pl, .tulip .pr { transform-origin: 100px 124px; transition: transform .9s cubic-bezier(.3,1.3,.5,1); }
+.tulip .pl { transform: rotate(-6deg); } .tulip .pr { transform: rotate(6deg); }
+.tulip.bloom .pl { transform: rotate(-42deg); } .tulip.bloom .pr { transform: rotate(42deg); }
+.tulip .core { opacity: 0; transform-origin: 100px 84px; transform: scale(.3); transition: opacity .5s ease .3s, transform .7s cubic-bezier(.3,1.6,.5,1) .3s; }
+.tulip.bloom .core { opacity: 1; transform: scale(1); }
+.buttons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+.reply { margin-top: 20px; background: var(--paper); border-radius: 22px 6px 22px 6px; padding: 20px 24px; font-family: var(--font-hand); font-size: 1.3rem; line-height: 1.7; }
+.reply b { font-family: var(--font-display); color: var(--accent); font-size: 1.8rem; display: block; line-height: 1.3; }
+.hearts { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 5; }
+.hearts svg { position: absolute; bottom: -40px; color: var(--accent); animation: rise var(--d, 4s) ease-in forwards; opacity: .85; }
+@keyframes rise { to { transform: translateY(-110vh) rotate(var(--r, 12deg)); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .hearts { display: none; }
+  .bear .head, .bear .drop, .bob { animation: none; }
+  .pill, .env-flap, .env-wrap, .door, .gift .lid, .lock .shackle, .tulip .pl, .tulip .pr, .tulip .core, .dot { transition: none; }
+  .scene.enter, .reveal { animation: none; }
+}
+</style>
+
+<main>
+  <div class="dots" id="dots" role="img" aria-label="Progress"></div>
+
+  <!-- Scene 1: envelope -->
+  <section class="scene" data-scene="0">
+    <svg class="bear" viewBox="0 0 240 225" role="img" aria-label="A teddy bear crying and holding a sign that says Sorry">
+      <g class="head">
+        <circle cx="62" cy="52" r="24" fill="var(--bear)"/><circle cx="178" cy="52" r="24" fill="var(--bear)"/>
+        <circle cx="62" cy="52" r="12" fill="var(--bear-light)"/><circle cx="178" cy="52" r="12" fill="var(--bear-light)"/>
+        <circle cx="120" cy="100" r="64" fill="var(--bear)"/>
+        <ellipse cx="82" cy="114" rx="11" ry="7" fill="var(--accent)" opacity=".35"/><ellipse cx="158" cy="114" rx="11" ry="7" fill="var(--accent)" opacity=".35"/>
+        <ellipse cx="120" cy="120" rx="27" ry="20" fill="var(--bear-light)"/>
+        <ellipse cx="120" cy="111" rx="9" ry="6" fill="var(--ink)"/>
+        <path d="M108 130 Q120 122 132 130" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="98" cy="94" r="6.5" fill="var(--ink)"/><circle cx="142" cy="94" r="6.5" fill="var(--ink)"/>
+        <circle cx="100" cy="92" r="2" fill="var(--paper)"/><circle cx="144" cy="92" r="2" fill="var(--paper)"/>
+        <path d="M86 84 L108 77" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round"/><path d="M132 77 L154 84" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round"/>
+        <path class="drop" d="M98 104 C93 112 93 118 98 118 C103 118 103 112 98 104 Z" fill="var(--tear)"/>
+      </g>
+      <ellipse cx="120" cy="205" rx="56" ry="40" fill="var(--bear)"/>
+      <rect x="54" y="156" width="132" height="54" rx="8" fill="var(--paper)" stroke="var(--ink)" stroke-width="3"/>
+      <text class="t-text" x="120" y="192" text-anchor="middle">SORRY</text>
+      <circle cx="58" cy="176" r="13" fill="var(--bear)"/><circle cx="182" cy="176" r="13" fill="var(--bear)"/>
+    </svg>
+    <h1>Didi, <span>I'm sorry.</span></h1>
+    <p class="lead">You've stopped talking to me, and I feel it a lot. I made something for you.</p>
+    <div class="stage">
+      <div class="env-wrap" data-open>
+        <button type="button" class="objbtn bob envelope" aria-label="Open the envelope">
+          <span class="env-back"></span><span class="env-front"></span><span class="env-flap"></span>
+          <svg class="env-heart" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.4C.9 8.1 3 4.5 6.6 4.5c2 0 3.6 1 4.4 2.4h2c.8-1.4 2.4-2.4 4.4-2.4 3.6 0 5.7 3.6 4.2 7.1C19.5 16.4 12 21 12 21z"/></svg>
+          <span class="env-label">For Didi</span>
+        </button>
+      </div>
+    </div>
+    <p class="hint">Tap the envelope</p>
+    <div class="nextbar" hidden><button type="button" class="pill solid next">Read my letter</button></div>
+  </section>
+
+  <!-- Scene 2: doors -->
+  <section class="scene" data-scene="1" hidden>
+    <h2>My letter</h2>
+    <p class="lead">Two little doors are in the way. Open them.</p>
+    <div class="doors" data-open>
+      <div class="letter" aria-label="Letter for Didi">
+        <p>Didi,</p>
+        <p>I know you're upset with me. When you don't talk, everything feels so quiet, and I don't like that quiet at all.</p>
+        <p>I understand my mistakes now. I admit them from my heart, and I will really try to fix them.</p>
+        <p>Please don't go away from me. Please don't leave me alone like this, Didi.</p>
+        <div class="sign">Your loving brother<strong>Shivtej</strong></div>
+      </div>
+      <div class="door l" aria-hidden="true"><span class="panel"></span></div>
+      <div class="door r" aria-hidden="true"><span class="panel"></span></div>
+      <button type="button" class="objbtn doorbtn bob" aria-label="Open the doors"></button>
+    </div>
+    <p class="hint">Tap the doors</p>
+    <div class="nextbar" hidden><button type="button" class="pill solid next">Open my gift</button></div>
+  </section>
+
+  <!-- Scene 3: gift -->
+  <section class="scene" data-scene="2" hidden>
+    <h2>A little gift</h2>
+    <p class="lead">Three things I owe you, valid anytime, no expiry.</p>
+    <div class="stage">
+      <button type="button" class="objbtn bob" data-open aria-label="Open the gift box">
+        <svg class="gift" viewBox="0 0 200 175" aria-hidden="true">
+          <rect x="30" y="76" width="140" height="92" rx="8" fill="var(--accent)"/>
+          <rect x="92" y="76" width="16" height="92" fill="var(--paper)"/>
+          <g class="lid">
+            <rect x="20" y="50" width="160" height="30" rx="7" fill="var(--accent-deep)"/>
+            <rect x="92" y="50" width="16" height="30" fill="var(--paper)"/>
+            <path d="M100 46 C70 10 52 36 80 46 Z" fill="none" stroke="var(--paper)" stroke-width="7" stroke-linejoin="round"/>
+            <path d="M100 46 C130 10 148 36 120 46 Z" fill="none" stroke="var(--paper)" stroke-width="7" stroke-linejoin="round"/>
+            <circle cx="100" cy="47" r="8" fill="var(--paper)"/>
+          </g>
+        </svg>
+      </button>
+    </div>
+    <p class="hint">Tap the gift</p>
+    <div class="reveal coupons" hidden>
+      <div class="coupon"><div><div class="tag">Coupon</div><p class="what">One chai or snack, my treat.</p></div><button type="button" class="pill redeem">Redeem</button><span class="stamp" aria-hidden="true">REDEEMED</span></div>
+      <div class="coupon"><div><div class="tag">Coupon</div><p class="what">One chore done for you, no complaints.</p></div><button type="button" class="pill redeem">Redeem</button><span class="stamp" aria-hidden="true">REDEEMED</span></div>
+      <div class="coupon"><div><div class="tag">Coupon</div><p class="what">One argument you win automatically.</p></div><button type="button" class="pill redeem">Redeem</button><span class="stamp" aria-hidden="true">REDEEMED</span></div>
+    </div>
+    <div class="nextbar" hidden><button type="button" class="pill solid next">My promises</button></div>
+  </section>
+
+  <!-- Scene 4: padlock -->
+  <section class="scene" data-scene="3" hidden>
+    <h2>What I will do</h2>
+    <p class="lead">My promises are locked up safe. Unlock them.</p>
+    <div class="stage">
+      <button type="button" class="objbtn bob" data-open aria-label="Unlock the padlock">
+        <svg class="lock" viewBox="0 0 160 195" aria-hidden="true">
+          <path class="shackle" d="M44 92 V62 a36 36 0 0 1 72 0 V92" fill="none" stroke="var(--ink)" stroke-width="14" stroke-linecap="round"/>
+          <rect x="22" y="88" width="116" height="94" rx="18" fill="var(--accent)"/>
+          <path d="M12 21s-7.5-4.6-9.6-9.4C.9 8.1 3 4.5 6.6 4.5c2 0 3.6 1 4.4 2.4h2c.8-1.4 2.4-2.4 4.4-2.4 3.6 0 5.7 3.6 4.2 7.1C19.5 16.4 12 21 12 21z" transform="translate(56 106) scale(1.9)" fill="var(--paper)"/>
+          <rect x="77" y="146" width="6" height="18" rx="3" fill="var(--paper)"/>
+        </svg>
+      </button>
+    </div>
+    <p class="hint">Tap the lock</p>
+    <ul class="reveal promises" hidden>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg><span>Listen to you properly, without cutting in.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg><span>Admit it right away when I'm wrong, with no excuses.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg><span>Keep working on myself so you never feel this way again.</span></li>
+    </ul>
+    <div class="nextbar" hidden><button type="button" class="pill solid next">One last thing</button></div>
+  </section>
+
+  <!-- Scene 5: tulip + question -->
+  <section class="scene" data-scene="4" hidden>
+    <h2>Didi, will you forgive me?</h2>
+    <div class="stage">
+      <svg class="tulip" id="tulip" viewBox="0 0 200 235" role="img" aria-label="A tulip bud that blooms when you say yes">
+        <path d="M100 232 V122" stroke="var(--leaf)" stroke-width="8" stroke-linecap="round" fill="none"/>
+        <path d="M100 205 C70 205 50 185 46 160 C74 164 96 180 100 205 Z" fill="var(--leaf)"/>
+        <path d="M100 195 C130 195 150 175 154 150 C126 154 104 170 100 195 Z" fill="var(--leaf)"/>
+        <g class="core"><path d="M12 21s-7.5-4.6-9.6-9.4C.9 8.1 3 4.5 6.6 4.5c2 0 3.6 1 4.4 2.4h2c.8-1.4 2.4-2.4 4.4-2.4 3.6 0 5.7 3.6 4.2 7.1C19.5 16.4 12 21 12 21z" transform="translate(80 54) scale(1.7)" fill="var(--accent)"/></g>
+        <g class="pl"><path d="M100 124 C72 114 66 64 100 36 C118 62 120 108 100 124 Z" fill="var(--accent-deep)"/></g>
+        <g class="pr"><path d="M100 124 C128 114 134 64 100 36 C82 62 80 108 100 124 Z" fill="var(--accent-deep)"/></g>
+        <path d="M100 126 C74 116 72 66 100 38 C128 66 126 116 100 126 Z" fill="var(--accent)"/>
+      </svg>
+    </div>
+    <div class="buttons" id="choices">
+      <button type="button" class="pill solid" id="btn-yes">Yes, forgiven</button>
+      <button type="button" class="pill ghost" id="btn-wait">I need some time</button>
+    </div>
+    <div aria-live="polite">
+      <div class="reply" id="reply-yes" hidden><b>Thank you, Didi.</b>You talked to me, and that means everything. I promise to keep your trust.</div>
+      <div class="reply" id="reply-wait" hidden><b>Okay, Didi.</b>Take all the time you need. I'm right here. Just call out when you're ready.</div>
+    </div>
+  </section>
+</main>
+<div class="hearts" id="hearts" aria-hidden="true"></div>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var scenes = Array.prototype.slice.call(document.querySelectorAll('.scene'));
+  var dotsBox = document.getElementById('dots');
+  var box = document.getElementById('hearts');
+  var path = 'M12 21s-7.5-4.6-9.6-9.4C.9 8.1 3 4.5 6.6 4.5c2 0 3.6 1 4.4 2.4h2c.8-1.4 2.4-2.4 4.4-2.4 3.6 0 5.7 3.6 4.2 7.1C19.5 16.4 12 21 12 21z';
+  var current = 0;
+
+  scenes.forEach(function () { var d = document.createElement('span'); d.className = 'dot'; dotsBox.appendChild(d); });
+
+  function paintDots() {
+    Array.prototype.forEach.call(dotsBox.children, function (d, i) {
+      d.className = 'dot' + (i < current ? ' done' : '') + (i === current ? ' now' : '');
+    });
+  }
+
+  function burst(n) {
+    if (reduce) return;
+    for (var i = 0; i < n; i++) {
+      var s = 18 + Math.random() * 30;
+      var el = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      el.setAttribute('viewBox', '0 0 24 24'); el.setAttribute('width', s); el.setAttribute('height', s); el.setAttribute('fill', 'currentColor');
+      el.style.left = (Math.random() * 100) + '%';
+      el.style.setProperty('--d', (3 + Math.random() * 3) + 's');
+      el.style.setProperty('--r', (Math.random() * 50 - 25) + 'deg');
+      el.style.animationDelay = (Math.random() * 0.9) + 's';
+      var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('d', path); el.appendChild(p); box.appendChild(el);
+    }
+    setTimeout(function () { box.innerHTML = ''; }, 8000);
+  }
+
+  function go(i) {
+    scenes[current].hidden = true;
+    current = i;
+    var s = scenes[current];
+    s.hidden = false;
+    s.classList.remove('enter'); void s.offsetWidth; s.classList.add('enter');
+    window.scrollTo(0, 0);
+    paintDots();
+  }
+
+  // Each scene has one tappable object. Tapping opens it, reveals the content and the Next button.
+  scenes.forEach(function (scene, idx) {
+    var trigger = scene.querySelector('[data-open]');
+    if (!trigger) return;
+    var done = false;
+    function open() {
+      if (done) return; done = true;
+      var target = trigger.closest('.env-wrap, .doors') || trigger;
+      target.classList.add('opened');
+      var svg = trigger.querySelector('svg.gift, svg.lock');
+      if (svg) svg.classList.add('opened');
+      if (svg && svg.classList.contains('lock')) { svg.classList.add('shake'); }
+      trigger.classList.remove('bob');
+      var hint = scene.querySelector('.hint'); if (hint) hint.hidden = true;
+      setTimeout(function () {
+        var rev = scene.querySelector('.reveal'); if (rev) rev.hidden = false;
+        var nb = scene.querySelector('.nextbar'); if (nb) nb.hidden = false;
+        burst(idx === 0 ? 8 : 10);
+        var anchor = scene.querySelector('.reveal') || scene.querySelector('.nextbar');
+        if (anchor) anchor.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+      }, reduce ? 0 : 700);
+    }
+    var btn = trigger.matches('button') ? trigger : trigger.querySelector('button');
+    (btn || trigger).addEventListener('click', open);
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.next'), function (b) {
+    b.addEventListener('click', function () { if (current < scenes.length - 1) go(current + 1); });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.redeem'), function (b) {
+    b.addEventListener('click', function () { b.closest('.coupon').classList.add('done'); burst(6); });
+  });
+
+  var tulip = document.getElementById('tulip');
+  var rYes = document.getElementById('reply-yes');
+  var rWait = document.getElementById('reply-wait');
+  document.getElementById('btn-yes').addEventListener('click', function () {
+    rWait.hidden = true; rYes.hidden = false; tulip.classList.add('bloom'); burst(40);
+    rYes.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+  });
+  document.getElementById('btn-wait').addEventListener('click', function () {
+    rYes.hidden = true; rWait.hidden = false;
+    rWait.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+  });
+
+  paintDots();
+})();
+</script>
+
+</body></html>
